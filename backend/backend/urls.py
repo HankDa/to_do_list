@@ -23,6 +23,13 @@ from todo import views
 router = routers.DefaultRouter()
 router.register(r'todos', views.TodoView, 'todo')
 
+"""
+all the url with prefix api/ will be handled by router.urls. 
+
+router.urls:
+api/todos/                  # GET (list), POST
+api/todos/<pk>/             # GET (retrieve), PUT, PATCH, DELETE
+"""
 urlpatterns = [
     path("admin/", admin.site.urls),
     path('api/', include(router.urls)),

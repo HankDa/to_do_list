@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import Modal from "./components/Modal";
+import NewsModal from "./components/NewsModal";
 import axios from "axios";
 
 class App extends Component {
@@ -8,7 +9,9 @@ class App extends Component {
     this.state = {
       viewCompleted: false,
       todoList: [],
+      newsList: [],
       modal: false,
+      newsModal: false,
       activeItem: {
         title: "",
         description: "",
@@ -71,7 +74,6 @@ class App extends Component {
   };
 
   getNews = () => {
-    let articles = [];
     axios.get('https://newsapi.org/v2/top-headlines', {
       params: {
         apiKey: 'beb85c3e1b704f1385f7c53a1fe596cb',
@@ -81,19 +83,18 @@ class App extends Component {
       }
     })
       .then(response => {
-        articles = response.data.articles;
-        console.log(articles);
+        this.setState({ newsList: response.data.articles });
       })
       .catch(error => {
         console.log(error);
       });
+  };
 
-      return articles;
-  }
   displayNewsList = () => {
-    let articles = this.getNews();
     // TODO: display news by Modal component. 
-  }
+    this.getNews();
+    this.setState({ newsModal: !this.state.newsModal });
+  };
 
 
   renderTabList = () => {
@@ -111,6 +112,12 @@ class App extends Component {
         >
           Incomplete
         </span>
+        <span
+          // onClick={() => this.displayCompleted(false)}
+          className={this.state.viewCompleted ? "nav-link" : "nav-link active"}
+        >
+          Daily Routing
+        </span>
       </div>
     );
   };
@@ -121,7 +128,6 @@ class App extends Component {
       (item) => item.completed === viewCompleted
     );
     
-    console.log(newItems);
     return newItems.map((item) => (
       <li
         key={item.id}
@@ -188,6 +194,12 @@ class App extends Component {
             onSave={this.handleSubmit}
           />
         ) : null}
+        {this.state.newsModal ? (
+          <NewsModal
+            newsList= {this.state.newsList}
+          />
+        ) : null}
+        
       </main>
     );
   }

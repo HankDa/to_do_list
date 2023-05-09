@@ -24,9 +24,9 @@ router = routers.DefaultRouter()
 router.register(r'todos', views.TodoView, 'todo')
 
 """
-all the url with prefix api/ will be handled by router.urls. 
+all the url with prefix api/ will be mapped to router.urls.
 
-router.urls:
+router.urls patterns:
 api/todos/                  # GET (list), POST
 api/todos/<pk>/             # GET (retrieve), PUT, PATCH, DELETE
 """

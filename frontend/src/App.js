@@ -22,6 +22,7 @@ class App extends Component {
 
   componentDidMount() {
     this.refreshList();
+    this.getNews();
   }
 
   refreshList = () => {
@@ -73,28 +74,44 @@ class App extends Component {
     return this.setState({ viewCompleted: false });
   };
 
-  getNews = () => {
-    axios.get('https://newsapi.org/v2/top-headlines', {
-      params: {
-        apiKey: 'beb85c3e1b704f1385f7c53a1fe596cb',
-        country: 'us',
-        category: 'general',
-        pageSize: 10
-      }
-    })
-      .then(response => {
-        this.setState({ newsList: response.data.articles });
+  getNews = (retryCount = 0) => {
+    const maxRetries = 3;
+    axios
+      .get("https://newsapi.org/v2/top-headlines", {
+        params: {
+          apiKey: "beb85c3e1b704f1385f7c53a1fe596cb",
+          country: "us",
+          category: "general",
+          pageSize: 5,
+        },
       })
-      .catch(error => {
+      .then((response) => {
+        if (response.data.articles.length > 0) {
+          console.log(response.data.articles);
+          this.setState({ newsList: response.data.articles });
+        } else {
+          if (retryCount < maxRetries) {
+            // Retry the API call after a timeout
+            setTimeout(() => {
+              this.getNews(retryCount + 1);
+            }, 1000);
+          } else {
+            console.log("Maximum number of retries reached.");
+          }
+        }
+      })
+      .catch((error) => {
         console.log(error);
       });
   };
-
-  displayNewsList = () => {
-    // TODO: display news by Modal component. 
-    this.getNews();
+  
+  toggleNews = async () => {
+    // ISSUE: the first time the modal is opened, the newsList is empty.
+    if (!this.state.newsModal) {
+        await this.getNews();
+    }
     this.setState({ newsModal: !this.state.newsModal });
-  };
+};
 
 
   renderTabList = () => {
@@ -174,7 +191,7 @@ class App extends Component {
                     </button>
                   </div>
                   <div className="col-auto">
-                    <button className="btn btn-primary" onClick={this.displayNewsList}>
+                    <button className="btn btn-primary" onClick={this.toggleNews}>
                       Get Daily News
                     </button>
                   </div>
@@ -196,6 +213,7 @@ class App extends Component {
         ) : null}
         {this.state.newsModal ? (
           <NewsModal
+            toggle={this.toggleNews}
             newsList= {this.state.newsList}
           />
         ) : null}

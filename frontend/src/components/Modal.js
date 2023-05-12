@@ -23,7 +23,8 @@ export default class CustomModal extends Component {
     let { name, value } = e.target;
 
     if (e.target.type === "checkbox") {
-      value = e.target.checked;
+        console.log(e.target);
+        value = e.target.checked;
     }
 
     const activeItem = { ...this.state.activeItem, [name]: value };
@@ -63,7 +64,7 @@ export default class CustomModal extends Component {
             </FormGroup>
             <FormGroup check>
               <Label check>
-                <Input
+                <Input key={1}
                   type="checkbox"
                   name="completed"
                   checked={this.state.activeItem.completed}

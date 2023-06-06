@@ -20,8 +20,9 @@ export default class NewsModal extends Component {
         super(props);
         this.state = {
             newsList: this.props.newsList,
-            activeItem: -1,
+            activeIndex: -1,
             selectedItem: [],
+            activeItem: this.props.activeItem,
         };
     }
 
@@ -36,7 +37,10 @@ export default class NewsModal extends Component {
     }
 
     handleChange = (e) => {
-    let { id, title, url, description, checked } = e.target;
+    let { id, title, checked } = e.target;
+    // as url is not the build in attribute of input tag, we need to use the attribute
+    const description = e.target.attributes.url.value;
+    console.log("Target:", e.target);
 
     if (e.target.type === "checkbox") {
         
@@ -48,14 +52,17 @@ export default class NewsModal extends Component {
                 ...this.state.selectedItem,
                 [id]: {
                   title,
-                  url,
-                  description}
+                  description,
+                  completed: false
+                }
               }
             }, this.handleSelectionChange
             );
           } else {
-            // TODO: understand how destructuring work
-            const { [id]: _, ...newSelectedItem } = this.state.selectedItem;
+            // [id]: _ -> extracting the id property (dynamic) to _ 
+            // const { [id]: _, ...newSelectedItem } = this.state.selectedItem;
+            const newSelectedItem = this.state.selectedItem
+            delete newSelectedItem[id];
             this.setState({ selectedItem: newSelectedItem }, this.handleSelectionChange);
           }
     }
@@ -68,7 +75,7 @@ export default class NewsModal extends Component {
     
     
     render() {
-    const { toggle } = this.props;
+    const { toggle, onSave } = this.props;
     const { newsList } = this.state;
     
     return (
@@ -84,14 +91,13 @@ export default class NewsModal extends Component {
                     id={index}
                     title= {item.title}
                     url= {item.url}
-                    description= {item.description}
                     onChange={this.handleChange}
                     />
                         {item.title}
                     </ListGroupItemHeading>
                     {this.state.activeIndex === index && (
                     <ListGroupItemText>
-                    <a href={item.url} target="_blank" rel="noopener noreferrer">{item.description}</a>
+                    <a href={item.url} target="_blank" rel="noopener noreferrer">{item.url}</a>
                     </ListGroupItemText>
                 )}
                 </ListGroupItem>
@@ -99,7 +105,13 @@ export default class NewsModal extends Component {
             </ListGroup>
         </ModalBody>
         <ModalFooter>
-            <Button color="primary" onClick={toggle}>
+        <Button color="primary" onClick={() => {
+        const selectedItemKeys = Object.keys(this.state.selectedItem);
+        selectedItemKeys.forEach(key => {
+            const item = this.state.selectedItem[key];
+            onSave(item);
+            });
+        }}>
             Add to todo list
             </Button>
         </ModalFooter>

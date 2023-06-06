@@ -37,8 +37,12 @@ class App extends Component {
   };
 
   handleSubmit = (item) => {
-    this.toggle();
+    
+    this.state.newsModal ? this.toggleNews() : this.toggle();
 
+    console.log(item);
+    // where is the id comes from?  
+    // item.id = this.state.todoList.length + 1;
     if (item.id) {
       axios
         .put(`/api/todos/${item.id}/`, item)
@@ -58,7 +62,6 @@ class App extends Component {
 
   createItem = () => {
     const item = { title: "", description: "", completed: false };
-
     this.setState({ activeItem: item, modal: !this.state.modal });
   };
 
@@ -79,7 +82,7 @@ class App extends Component {
     axios
       .get("https://newsapi.org/v2/top-headlines", {
         params: {
-          apiKey: "beb85c3e1b704f1385f7c53a1fe596cb",
+          apiKey: process.env.REACT_APP_API_KEY,
           country: "us",
           category: "general",
           pageSize: 5,
@@ -213,8 +216,10 @@ class App extends Component {
         ) : null}
         {this.state.newsModal ? (
           <NewsModal
+            activeItem={this.state.activeItem}
             toggle={this.toggleNews}
             newsList= {this.state.newsList}
+            onSave={this.handleSubmit}
           />
         ) : null}
         

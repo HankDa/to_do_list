@@ -40,3 +40,7 @@ This project creates a backend server using Django and a frontend using React. I
 
    Note: Replace `YOUR_API_KEY` with the actual API key obtained from [https://newsapi.org](https://newsapi.org).
 
+# References
+1. https://www.digitalocean.com/community/tutorials/build-a-to-do-application-using-django-and-react
+2. https://upmostly.com/tutorials/how-to-use-environment-variables-in-reactjs-applications
+3. 

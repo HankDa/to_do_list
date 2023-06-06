@@ -43,4 +43,3 @@ This project creates a backend server using Django and a frontend using React. I
 # References
 1. https://www.digitalocean.com/community/tutorials/build-a-to-do-application-using-django-and-react
 2. https://upmostly.com/tutorials/how-to-use-environment-variables-in-reactjs-applications
-3. 
